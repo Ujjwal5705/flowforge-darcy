@@ -55,6 +55,9 @@ pre-build validator accepts the literal `torch==2.8.0` requirement but rejects
 the compatible local-version suffix `+cpu`. The snapshot retains the accepted
 public version and supplies the official PyTorch CPU extra index for pip's wheel
 selection. Inference explicitly uses CPU regardless of the installed build.
+The snapshot also retains prebuilt `frontend/dist` in the SDK's generated Docker
+context. The local Dockerfile builds that directory in its Node stage, whereas
+the Gradio SDK copies it directly; their ignore rules therefore differ explicitly.
 
 Install `requirements-space.lock` and run the adapter with:
 

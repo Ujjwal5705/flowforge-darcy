@@ -36,6 +36,12 @@ def main() -> None:
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / path, destination)
     shutil.copytree(ROOT / "frontend/dist", target / "frontend/dist")
+    # The local Dockerfile builds assets in Node; the Gradio SDK copies our
+    # already-built assets instead. Its generated Docker build honors this file.
+    dockerignore = (target / ".dockerignore").read_text().splitlines()
+    (target / ".dockerignore").write_text(
+        "\n".join(line for line in dockerignore if line.strip() != "frontend/dist") + "\n"
+    )
     shutil.copy2(ROOT / "deployment/space-README.md", target / "README.md")
     requirements = (ROOT / "requirements-space.lock").read_text()
     if requirements.count("\ntorch==2.8.0\n") != 1:
