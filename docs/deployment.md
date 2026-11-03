@@ -50,8 +50,11 @@ Starlette requirement motivated the compatible FastAPI 0.162.0 / Starlette 1.10.
 serving stack; the trained FNO, preprocessing and checkpoint are unchanged.
 The provider also installs Gradio's MCP and OAuth extras. Pydantic is pinned to
 2.12.5 to satisfy their declared compatibility range; the first private build
-identified the incompatible newer pin before any public release. The snapshot
-selects the official `torch==2.8.0+cpu` wheel through PyTorch's CPU index.
+identified the incompatible newer pin before any public release. ZeroGPU's
+pre-build validator accepts the literal `torch==2.8.0` requirement but rejects
+the compatible local-version suffix `+cpu`. The snapshot retains the accepted
+public version and supplies the official PyTorch CPU extra index for pip's wheel
+selection. Inference explicitly uses CPU regardless of the installed build.
 
 Install `requirements-space.lock` and run the adapter with:
 

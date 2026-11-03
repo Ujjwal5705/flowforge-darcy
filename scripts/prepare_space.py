@@ -40,7 +40,8 @@ def main() -> None:
     requirements = (ROOT / "requirements-space.lock").read_text()
     if requirements.count("\ntorch==2.8.0\n") != 1:
         raise ValueError("Review the CPU wheel selection after changing the PyTorch pin")
-    requirements = requirements.replace("\ntorch==2.8.0\n", "\ntorch==2.8.0+cpu\n")
+    # ZeroGPU validates the literal public version before pip resolves the wheel.
+    # Keep 2.8.0 here; its compatible +cpu local build can resolve from this index.
     (target / "requirements.txt").write_text(
         "--extra-index-url https://download.pytorch.org/whl/cpu\n" + requirements
     )
@@ -62,7 +63,7 @@ def main() -> None:
         "session_log_included": False,
         "hosting_sdk": "gradio",
         "inference_device": "cpu",
-        "hosting_torch_wheel": "2.8.0+cpu",
+        "hosting_torch_requirement": "2.8.0; official CPU extra index enabled",
     }
     (target / "deployment-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(
