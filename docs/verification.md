@@ -25,6 +25,11 @@ quantities are recorded in `artifacts/darcy-fno/` and `docs/experiments.md`.
   expected checkpoint hash. Verified local subset reuse passed its stored SHA-256 checks.
 - The Gradio callback was also called over actual HTTP using gradio_client, returning
   the same model version and finite `[32,32]` prediction as the main API.
+- CPU Docker image: built successfully; non-root runtime became model-ready in
+  3.57 seconds of polling. Image size 286,636,421 bytes; observed memory about
+  235 MiB. Independent HTTP prediction/metric/checkpoint checks passed. All five
+  main browser tests passed against the container, with no application errors
+  found in its startup/runtime logs. See `docs/deployment.md` for measurement scope.
 
 The first integration-suite invocation preceded completion of the evaluation
 artifact and correctly reported three setup errors. It was rerun after the
@@ -40,6 +45,6 @@ No warnings or failing checks were suppressed.
 
 ## Still being verified
 
-The final same-origin container and the private hosted application are undergoing
-their deployment checks. They are not yet reported as deployed or verified here.
+The private hosted application is undergoing its deployment checks. It is not
+yet reported as deployed or verified here.
 This record is updated from actual results before the final commit.

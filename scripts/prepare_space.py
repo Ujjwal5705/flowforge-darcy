@@ -37,7 +37,13 @@ def main() -> None:
         shutil.copy2(ROOT / path, destination)
     shutil.copytree(ROOT / "frontend/dist", target / "frontend/dist")
     shutil.copy2(ROOT / "deployment/space-README.md", target / "README.md")
-    shutil.copy2(ROOT / "requirements-space.lock", target / "requirements.txt")
+    requirements = (ROOT / "requirements-space.lock").read_text()
+    if requirements.count("\ntorch==2.8.0\n") != 1:
+        raise ValueError("Review the CPU wheel selection after changing the PyTorch pin")
+    requirements = requirements.replace("\ntorch==2.8.0\n", "\ntorch==2.8.0+cpu\n")
+    (target / "requirements.txt").write_text(
+        "--extra-index-url https://download.pytorch.org/whl/cpu\n" + requirements
+    )
     config = json.loads((target / "artifacts/darcy-fno/config.json").read_text())
     model_hash = sha256(target / "artifacts/darcy-fno/best.pt")
     if model_hash != config["checkpoint_sha256"]:
@@ -56,6 +62,7 @@ def main() -> None:
         "session_log_included": False,
         "hosting_sdk": "gradio",
         "inference_device": "cpu",
+        "hosting_torch_wheel": "2.8.0+cpu",
     }
     (target / "deployment-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(

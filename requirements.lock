@@ -128,13 +128,14 @@ protobuf==7.36.2
     #   googleapis-common-protos
     #   opentelemetry-proto
     #   wandb
-pydantic==2.14.2
+pydantic==2.12.5
     # via
+    #   flowforge (pyproject.toml)
     #   cwevals
     #   fastapi
     #   wandb
     #   zencfg
-pydantic-core==2.50.2
+pydantic-core==2.41.5
     # via pydantic
 pyparsing==3.3.3
     # via matplotlib

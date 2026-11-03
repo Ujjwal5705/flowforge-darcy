@@ -15,8 +15,20 @@ docker compose down
 The image installs CPU-only PyTorch from its official CPU index before the pinned
 runtime requirements. The official uv 0.10.8 binary and BuildKit cache mounts avoid
 repeated serial dependency downloads. Frontend assets are built in a Node stage.
+An optional `.build-wheels/` cache can supply official platform-compatible wheels
+on slow connections; its wheel files are ignored and do not enter the final image.
+The tracked empty directory permits ordinary builds directly from a fresh clone.
 Only the six required model/metadata files enter the final application layer.
 The healthcheck verifies `model_loaded`, not merely a listening port.
+
+The ARM64 image was built and run on 3 November 2026 UTC: 286,636,421 image bytes,
+about 235 MiB container memory after the browser workload, and model-ready health
+3.57 seconds after the startup poll began (immediately after `docker run`). The
+container runs as `flowforge`, health status is `healthy`, and five real browser
+tests passed against its same-origin frontend/API on localhost:7861. A held-out
+prediction returned finite 32×32 output and relative L2 0.04366723; independent
+recalculation and the checkpoint SHA-256 matched. Startup/runtime logs contained
+no application errors. These are local ARM64 observations, not hosted guarantees.
 
 ## Hugging Face hosting decision
 
@@ -36,6 +48,10 @@ API at `/api`. The same CPU model is loaded once through the shared lifespan.
 It does not allocate a GPU or consume a remote inference API. Gradio's current
 Starlette requirement motivated the compatible FastAPI 0.162.0 / Starlette 1.10.0
 serving stack; the trained FNO, preprocessing and checkpoint are unchanged.
+The provider also installs Gradio's MCP and OAuth extras. Pydantic is pinned to
+2.12.5 to satisfy their declared compatibility range; the first private build
+identified the incompatible newer pin before any public release. The snapshot
+selects the official `torch==2.8.0+cpu` wheel through PyTorch's CPU index.
 
 Install `requirements-space.lock` and run the adapter with:
 

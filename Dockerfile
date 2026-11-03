@@ -19,7 +19,9 @@ COPY --from=ghcr.io/astral-sh/uv:0.10.8 /uv /usr/local/bin/uv
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install --system torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
 COPY requirements.lock ./
-RUN --mount=type=cache,target=/root/.cache/uv uv pip install --system -r requirements.lock
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=.build-wheels,target=/wheels,readonly \
+    uv pip install --system --find-links /wheels -r requirements.lock
 RUN useradd --create-home --uid 1000 flowforge
 
 FROM dependencies AS runtime

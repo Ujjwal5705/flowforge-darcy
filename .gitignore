@@ -1,5 +1,6 @@
 .venv/
 .cache/
+.build-wheels/*.whl
 __pycache__/
 *.py[cod]
 .pytest_cache/
