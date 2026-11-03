@@ -1,0 +1,31 @@
+{
+  "model": {
+    "mse": 0.00043567873679819233,
+    "mae": 0.010755230519394057,
+    "relative_l2": 0.06176814285238848
+  },
+  "baseline": {
+    "mse": 0.013103230538939229,
+    "mae": 0.07785760252562708,
+    "relative_l2": 0.5753511941629819
+  },
+  "test_size": 112,
+  "resolution": [
+    32,
+    32
+  ],
+  "latency": {
+    "median_ms": 3.6755830005859025,
+    "p95_ms": 4.2928038498757815,
+    "warmup_calls": 10,
+    "timed_calls": 100,
+    "batch_size": 1,
+    "scope": "normalize + FNO forward + decode; excludes network and JSON",
+    "device": "cpu",
+    "threads": 2,
+    "machine": "arm64"
+  },
+  "checkpoint_sha256": "f711c406ba83cee285f97adf2cd067c803e4d915753ee613e5f2639c727265e5",
+  "evaluated_at_utc": "2026-11-03T17:52:51.035852+00:00",
+  "metric_definition": "MSE/MAE over all pixels; mean per-sample relative L2 (epsilon 1e-12)"
+}

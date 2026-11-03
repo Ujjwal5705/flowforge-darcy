@@ -14,7 +14,7 @@ from pathlib import Path
 
 import h5py
 import numpy as np
-from inspect_pdebench import RangeReader
+from inspect_pdebench import PreparationError, RangeReader
 
 URL = "https://darus.uni-stuttgart.de/api/access/datafile/133219"
 
@@ -26,14 +26,16 @@ def fetch_range(url, start, end, total):
             with urllib.request.urlopen(request, timeout=90) as response:
                 expected = f"bytes {start}-{end}/{total}"
                 if response.status != 206 or response.headers.get("Content-Range") != expected:
-                    raise RuntimeError("Dataset server returned an incompatible byte range")
+                    raise PreparationError("Dataset server returned an incompatible byte range")
                 content = response.read(end - start + 2)
             if len(content) != end - start + 1:
-                raise RuntimeError("Incomplete dataset download")
+                raise PreparationError("Incomplete dataset download")
             return start, content
         except Exception:
             if attempt == 2:
-                raise RuntimeError("Dataset range download failed after three attempts") from None
+                raise PreparationError(
+                    "Dataset range download failed after three attempts"
+                ) from None
             time.sleep(attempt + 1)
 
 
@@ -45,21 +47,37 @@ def main():
     if not 16 <= args.count <= 2048:
         parser.error("count must be between 16 and 2048 (bounded subset only)")
     if args.output.exists():
-        raise RuntimeError("Output already exists; inspect it or choose a new output path")
+        try:
+            metadata = json.loads(args.output.with_suffix(".json").read_text())
+            with np.load(args.output, allow_pickle=False) as saved:
+                for key, name in [("nu", "x"), ("tensor", "y")]:
+                    array = saved[name]
+                    if array.shape != (args.count, 32, 32) or (
+                        hashlib.sha256(array.tobytes()).hexdigest() != metadata["array_sha256"][key]
+                    ):
+                        raise ValueError("Incompatible existing subset")
+            if metadata["sample_indices"] != list(range(args.count)):
+                raise ValueError("Different source cohort")
+        except Exception:
+            raise PreparationError(
+                "Existing subset cannot be verified; inspect it or choose a new --output path."
+            ) from None
+        print(f"Existing {args.count}-pair subset passed its stored array SHA-256 checks.")
+        return
     started = time.perf_counter()
     reader = RangeReader(URL)
     with h5py.File(reader, "r") as file:
         if float(file.attrs["beta"]) != 1.0:
-            raise RuntimeError("Unexpected PDE forcing")
+            raise PreparationError("Unexpected PDE forcing")
         coordinates = {k: np.asarray(file[k])[::4].copy() for k in ["x-coordinate", "y-coordinate"]}
         descriptors = {}
         for key in ["nu", "tensor"]:
             dataset = file[key]
             expected = (10000, 128, 128) if key == "nu" else (10000, 1, 128, 128)
             if dataset.shape != expected or dataset.dtype != np.dtype("float32"):
-                raise RuntimeError("Unexpected HDF5 layout")
+                raise PreparationError("Unexpected HDF5 layout")
             if dataset.chunks is not None or dataset.id.get_offset() is None:
-                raise RuntimeError("This downloader requires the verified contiguous shard")
+                raise PreparationError("This downloader requires the verified contiguous shard")
             descriptors[key] = dataset.id.get_offset()
     arrays = {}
     transferred = reader.transferred
@@ -86,9 +104,9 @@ def main():
         del output
     for array in arrays.values():
         if not np.isfinite(array).all():
-            raise RuntimeError("Non-finite source data")
+            raise PreparationError("Non-finite source data")
     if not np.isin(arrays["nu"], np.array([0.1, 1.0], dtype=np.float32)).all():
-        raise RuntimeError("Unexpected coefficient range")
+        raise PreparationError("Unexpected coefficient range")
     args.output.parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(
         args.output,
@@ -128,8 +146,6 @@ if __name__ == "__main__":
         main()
     except Exception as error:
         # urllib exceptions can contain signed redirect URLs; do not print them.
-        print(
-            f"Dataset preparation failed ({type(error).__name__}); no output is trusted.",
-            file=sys.stderr,
-        )
+        message = str(error) if isinstance(error, PreparationError) else type(error).__name__
+        print(f"Dataset preparation failed: {message}", file=sys.stderr)
         sys.exit(1)

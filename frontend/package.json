@@ -6,19 +6,22 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "tsc -b && vite build",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test workspace.spec.ts",
+    "test:e2e:space": "playwright test space.spec.ts"
   },
   "dependencies": {
+    "lucide-react": "0.511.0",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "lucide-react": "0.511.0"
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "@playwright/test": "1.52.0",
+    "@tailwindcss/vite": "4.1.8",
     "@types/react": "19.1.6",
     "@types/react-dom": "19.1.6",
     "@vitejs/plugin-react": "4.5.1",
-    "@playwright/test": "1.52.0",
-    "@tailwindcss/vite": "4.1.8",
+    "prettier": "3.5.3",
     "tailwindcss": "4.1.8",
     "typescript": "5.8.3",
     "vite": "6.3.5"

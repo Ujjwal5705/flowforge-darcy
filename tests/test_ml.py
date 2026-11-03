@@ -117,7 +117,7 @@ def test_dataset_hash_and_coordinate_integrity(tmp_path):
     with pytest.raises(ValueError, match="checksum"):
         load_dataset(path)
     y[0, 0, 0] -= 1
-    # Restore the exact original bytes, then corrupt only coordinates.
+    # Use a fresh valid target array, then corrupt only coordinates.
     y = rng.random((16, 32, 32), dtype=np.float32)
     metadata["array_sha256"]["tensor"] = hashlib.sha256(y.tobytes()).hexdigest()
     path.with_suffix(".json").write_text(json.dumps(metadata))

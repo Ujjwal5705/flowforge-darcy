@@ -1,7 +1,7 @@
 .git
 .venv
 .cache
-.env
+.env*
 data
 frontend/node_modules
 frontend/dist
@@ -11,4 +11,13 @@ frontend/playwright-report
 .pytest_cache
 .ruff_cache
 artifacts/**/last.pt
+artifacts/*
+!artifacts/darcy-fno/
+artifacts/darcy-fno/*
+!artifacts/darcy-fno/config.json
+!artifacts/darcy-fno/best.pt
+!artifacts/darcy-fno/dataset.json
+!artifacts/darcy-fno/evaluation.json
+!artifacts/darcy-fno/examples.json
+!artifacts/darcy-fno/history.json
 deployment-staging

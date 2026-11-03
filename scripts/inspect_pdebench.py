@@ -9,13 +9,17 @@ from collections import OrderedDict
 import h5py
 
 
+class PreparationError(RuntimeError):
+    """A controlled, credential-free dataset preparation error."""
+
+
 class RangeReader(io.RawIOBase):
     def __init__(self, url: str, block_size: int = 64 * 1024):
         super().__init__()
         req = urllib.request.Request(url, headers={"Range": "bytes=0-0"})
         with urllib.request.urlopen(req, timeout=60) as response:
             if response.status != 206:
-                raise RuntimeError("Dataset server must support byte ranges")
+                raise PreparationError("Dataset server must support byte ranges")
             content_range = response.headers["Content-Range"]
             self.size = int(re.fullmatch(r"bytes 0-0/(\d+)", content_range).group(1))
             self.url = response.url  # Ephemeral public redirect retained only in memory.
@@ -62,10 +66,10 @@ class RangeReader(io.RawIOBase):
                 req = urllib.request.Request(self.url, headers={"Range": f"bytes={start}-{stop}"})
                 with urllib.request.urlopen(req, timeout=90) as response:
                     if response.status != 206:
-                        raise RuntimeError("Unexpected full-file response")
+                        raise PreparationError("Unexpected full-file response")
                     data = response.read(self.block_size + 1)
                 if len(data) != stop - start + 1:
-                    raise RuntimeError("Incomplete dataset range")
+                    raise PreparationError("Incomplete dataset range")
                 self.transferred += len(data)
                 self.cache[block] = data
                 if len(self.cache) > 8:

@@ -42,10 +42,10 @@ def main() -> None:
         "neuraloperator": version("neuraloperator"),
         "torch": torch.__version__,
         "device": "cpu",
-        "loader_signature": str(inspect.signature(load_darcy_flow_small)),
+        "loader_parameters": list(inspect.signature(load_darcy_flow_small).parameters),
         "input_shape": list(x.shape),
         "output_shape": list(prediction.shape),
-        "raw_input_dtype": str(train.dataset[0]["x"].dtype),
+        "loader_input_dtype": str(train.dataset[0]["x"].dtype),
         "explicit_input_cast": "float32",
         "losses": losses,
         "parameters_real_scalars": sum(

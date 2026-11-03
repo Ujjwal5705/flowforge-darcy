@@ -1,0 +1,82 @@
+export type Field = number[][];
+export type Metrics = { mse: number; mae: number; relative_l2: number };
+export type ExampleSummary = {
+  id: string;
+  name: string;
+  source_index: number;
+  split: 'test';
+  has_reference: boolean;
+};
+export type Example = ExampleSummary & { coefficient: Field; reference: Field };
+export type Prediction = {
+  prediction: Field;
+  shape: number[];
+  array_layout: string;
+  inference_ms: number;
+  model_version: string;
+  checkpoint_sha256: string;
+  device: string;
+  summary: { minimum: number; maximum: number; mean: number };
+  warnings: string[];
+  reference: Field | null;
+  absolute_error: Field | null;
+  comparison: Metrics | null;
+  example_id: string | null;
+};
+export type History = {
+  epoch: number;
+  train_normalized_mse: number;
+  validation_mse: number;
+  validation_relative_l2: number;
+  learning_rate: number;
+  seconds: number;
+};
+export type ModelInfo = {
+  model_version: string;
+  checkpoint_sha256: string;
+  pde: string;
+  equation: string;
+  domain: string;
+  boundary: string;
+  forcing: number;
+  resolution: number[];
+  supported_input_range: number[];
+  solution_units: string;
+  array_layout: string;
+  architecture: { n_modes: number[]; hidden_channels: number; n_layers: number };
+  normalization: { x_mean: number; x_std: number; y_mean: number; y_std: number };
+  training: {
+    epochs: number;
+    best_epoch: number;
+    seed: number;
+    batch_size: number;
+    learning_rate: number;
+    training_seconds: number;
+    parameters: { real_scalars: number; tensor_elements: number };
+    split_sizes: { train: number; validation: number; test: number };
+    hardware: { device: string; machine: string; torch_threads: number };
+    versions: Record<string, string>;
+    trained_at_utc: string;
+  };
+  evaluation: Metrics;
+  baseline: Metrics;
+  latency: {
+    median_ms: number;
+    p95_ms: number;
+    threads: number;
+    machine: string;
+    timed_calls: number;
+  };
+  provenance: {
+    source: string;
+    doi: string;
+    filename: string;
+    url: string;
+    license: string;
+    subset: string;
+    sample_count: number;
+    subsampling: string;
+  };
+  coordinates: { x_coordinates: number[]; y_coordinates: number[] };
+  limitations: string[];
+};
