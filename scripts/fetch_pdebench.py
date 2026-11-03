@@ -14,7 +14,6 @@ from pathlib import Path
 
 import h5py
 import numpy as np
-
 from inspect_pdebench import RangeReader
 
 URL = "https://darus.uni-stuttgart.de/api/access/datafile/133219"
@@ -52,8 +51,7 @@ def main():
     with h5py.File(reader, "r") as file:
         if float(file.attrs["beta"]) != 1.0:
             raise RuntimeError("Unexpected PDE forcing")
-        coordinates = {k: np.asarray(file[k])[::4].copy()
-                       for k in ["x-coordinate", "y-coordinate"]}
+        coordinates = {k: np.asarray(file[k])[::4].copy() for k in ["x-coordinate", "y-coordinate"]}
         descriptors = {}
         for key in ["nu", "tensor"]:
             dataset = file[key]
@@ -69,18 +67,22 @@ def main():
         nbytes = args.count * 128 * 128 * 4
         output = bytearray(nbytes)
         block_size = 2 * 1024 * 1024
-        jobs = [(offset + i, min(offset+nbytes-1, offset+i+block_size-1))
-                for i in range(0, nbytes, block_size)]
+        jobs = [
+            (offset + i, min(offset + nbytes - 1, offset + i + block_size - 1))
+            for i in range(0, nbytes, block_size)
+        ]
         completed = 0
         with ThreadPoolExecutor(max_workers=8) as pool:
             futures = [pool.submit(fetch_range, reader.url, a, b, reader.size) for a, b in jobs]
             for future in as_completed(futures):
                 begin, content = future.result()
-                output[begin-offset:begin-offset+len(content)] = content
+                output[begin - offset : begin - offset + len(content)] = content
                 transferred += len(content)
                 completed += 1
                 print(f"{key}: {completed}/{len(jobs)} ranges verified", flush=True)
-        arrays[key] = np.frombuffer(output, dtype="<f4").reshape(args.count, 128, 128)[:, ::4, ::4].copy()
+        arrays[key] = (
+            np.frombuffer(output, dtype="<f4").reshape(args.count, 128, 128)[:, ::4, ::4].copy()
+        )
         del output
     for array in arrays.values():
         if not np.isfinite(array).all():
@@ -88,24 +90,36 @@ def main():
     if not np.isin(arrays["nu"], np.array([0.1, 1.0], dtype=np.float32)).all():
         raise RuntimeError("Unexpected coefficient range")
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    np.savez_compressed(args.output, x=arrays["nu"], y=arrays["tensor"],
-                        x_coordinates=coordinates["x-coordinate"],
-                        y_coordinates=coordinates["y-coordinate"])
+    np.savez_compressed(
+        args.output,
+        x=arrays["nu"],
+        y=arrays["tensor"],
+        x_coordinates=coordinates["x-coordinate"],
+        y_coordinates=coordinates["y-coordinate"],
+    )
     metadata = {
-        "source": "PDEBench", "doi": "10.18419/darus-2986", "file_id": 133219,
-        "filename": "2D_DarcyFlow_beta1.0_Train.hdf5", "url": URL,
-        "license": "CC BY 4.0", "source_size_bytes": reader.size,
+        "source": "PDEBench",
+        "doi": "10.18419/darus-2986",
+        "file_id": 133219,
+        "filename": "2D_DarcyFlow_beta1.0_Train.hdf5",
+        "url": URL,
+        "license": "CC BY 4.0",
+        "source_size_bytes": reader.size,
         "published_source_md5": "81694ed31306ff2e5f6b76349b0b4389",
         "full_source_checksum_verified": False,
         "checksum_note": "Only bounded ranges were downloaded; full-shard MD5 was not checked.",
-        "sample_indices": list(range(args.count)), "source_resolution": [128, 128],
-        "resolution": [32, 32], "subsampling": "array[:, ::4, ::4], no interpolation",
-        "array_layout": "sample, x_index, y_index", "beta": 1.0,
-        "bytes_transferred": transferred, "download_seconds": time.perf_counter()-started,
+        "sample_indices": list(range(args.count)),
+        "source_resolution": [128, 128],
+        "resolution": [32, 32],
+        "subsampling": "array[:, ::4, ::4], no interpolation",
+        "array_layout": "sample, x_index, y_index",
+        "beta": 1.0,
+        "bytes_transferred": transferred,
+        "download_seconds": time.perf_counter() - started,
         "array_sha256": {k: hashlib.sha256(v.tobytes()).hexdigest() for k, v in arrays.items()},
         "ranges": {k: [float(v.min()), float(v.max())] for k, v in arrays.items()},
     }
-    args.output.with_suffix(".json").write_text(json.dumps(metadata, indent=2)+"\n")
+    args.output.with_suffix(".json").write_text(json.dumps(metadata, indent=2) + "\n")
     print(json.dumps({k: v for k, v in metadata.items() if k != "sample_indices"}, indent=2))
 
 
@@ -114,5 +128,8 @@ if __name__ == "__main__":
         main()
     except Exception as error:
         # urllib exceptions can contain signed redirect URLs; do not print them.
-        print(f"Dataset preparation failed ({type(error).__name__}); no output is trusted.", file=sys.stderr)
+        print(
+            f"Dataset preparation failed ({type(error).__name__}); no output is trusted.",
+            file=sys.stderr,
+        )
         sys.exit(1)

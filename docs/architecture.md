@@ -53,10 +53,14 @@ an error map. Editing an example clears its reference identity in the client.
 ## Artifact strategy
 
 Source, dependency locks, training commands, compact measured reports and figures
-belong in Git. Raw data, virtual environments, caches and training checkpoints are
-ignored. A deployment bundle includes the best checkpoint, its JSON configuration,
-report, and a small attributed set of held-out examples. The Docker image requires
-no access to the training dataset and no download credentials at startup.
+belong in Git. Raw data, virtual environments, caches and intermediate checkpoints
+are ignored. The final checkpoint is only about 2.7 MB, so an explicit allowlist
+versions exactly one runtime artifact, its configuration, split indices, history,
+evaluation, training-mean baseline and six attributed held-out examples. This makes
+the application runnable directly from the repository. It is the checkpoint trained
+in this session, not a downloaded pretrained model. Full test predictions remain ignored.
 
-The final deployment record must identify a verified artifact revision and its
-checksum so another reviewer can fetch the same weights or reproduce them locally.
+The Docker image includes only the six files needed at runtime and requires no
+training dataset or download credentials at startup. SHA-256 links weights to the
+configuration and evaluation report. The repository history identifies the final
+artifact revision; local retraining remains available through the documented commands.

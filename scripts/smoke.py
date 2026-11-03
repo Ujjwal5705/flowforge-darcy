@@ -48,8 +48,9 @@ def main() -> None:
         "raw_input_dtype": str(train.dataset[0]["x"].dtype),
         "explicit_input_cast": "float32",
         "losses": losses,
-        "parameters_real_scalars": sum(p.numel() * (2 if p.is_complex() else 1)
-                                       for p in model.parameters()),
+        "parameters_real_scalars": sum(
+            p.numel() * (2 if p.is_complex() else 1) for p in model.parameters()
+        ),
         "test_samples_loaded": len(tests[16].dataset),
     }
     Path("docs/smoke.json").write_text(json.dumps(report, indent=2) + "\n")

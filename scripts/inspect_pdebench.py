@@ -46,7 +46,7 @@ class RangeReader(io.RawIOBase):
 
     def readinto(self, buffer):
         data = self.read(len(buffer))
-        buffer[:len(data)] = data
+        buffer[: len(data)] = data
         return len(data)
 
     def read(self, size=-1):
@@ -71,7 +71,7 @@ class RangeReader(io.RawIOBase):
                 if len(self.cache) > 8:
                     self.cache.popitem(last=False)
             count = min(end - self.position, self.block_size - (self.position - start))
-            chunks.append(self.cache[block][self.position-start:self.position-start+count])
+            chunks.append(self.cache[block][self.position - start : self.position - start + count])
             self.position += count
         return b"".join(chunks)
 
@@ -82,9 +82,14 @@ if __name__ == "__main__":
         report = {
             "size": reader.size,
             "datasets": {
-                k: {"shape": list(v.shape), "dtype": str(v.dtype),
-                    "chunks": v.chunks, "offset": v.id.get_offset()}
-                for k, v in file.items() if isinstance(v, h5py.Dataset)
+                k: {
+                    "shape": list(v.shape),
+                    "dtype": str(v.dtype),
+                    "chunks": v.chunks,
+                    "offset": v.id.get_offset(),
+                }
+                for k, v in file.items()
+                if isinstance(v, h5py.Dataset)
             },
             "attributes": {k: str(v) for k, v in file.attrs.items()},
         }
