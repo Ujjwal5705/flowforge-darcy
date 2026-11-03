@@ -43,14 +43,7 @@ def main() -> None:
         "\n".join(line for line in dockerignore if line.strip() != "frontend/dist") + "\n"
     )
     shutil.copy2(ROOT / "deployment/space-README.md", target / "README.md")
-    requirements = (ROOT / "requirements-space.lock").read_text()
-    if requirements.count("\ntorch==2.8.0\n") != 1:
-        raise ValueError("Review the CPU wheel selection after changing the PyTorch pin")
-    # ZeroGPU validates the literal public version before pip resolves the wheel.
-    # Keep 2.8.0 here; its compatible +cpu local build can resolve from this index.
-    (target / "requirements.txt").write_text(
-        "--extra-index-url https://download.pytorch.org/whl/cpu\n" + requirements
-    )
+    shutil.copy2(ROOT / "requirements-space.lock", target / "requirements.txt")
     config = json.loads((target / "artifacts/darcy-fno/config.json").read_text())
     model_hash = sha256(target / "artifacts/darcy-fno/best.pt")
     if model_hash != config["checkpoint_sha256"]:
@@ -69,7 +62,8 @@ def main() -> None:
         "session_log_included": False,
         "hosting_sdk": "gradio",
         "inference_device": "cpu",
-        "hosting_torch_requirement": "2.8.0; official CPU extra index enabled",
+        "hosting_torch_requirement": "2.8.0; provider-compatible CUDA build",
+        "auxiliary_benchmark_device": "On-demand ZeroGPU; local CPU fallback",
     }
     (target / "deployment-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(

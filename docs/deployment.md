@@ -44,17 +44,23 @@ hardware `zero-a10g`. Creation alone is not deployment verification.
 
 The optional `deployment/gradio_app.py` adapter mounts a functional Gradio benchmark
 check at `/benchmark`, preserving the React app at `/` and the existing FastAPI
-API at `/api`. The same CPU model is loaded once through the shared lifespan.
-It does not allocate a GPU or consume a remote inference API. Gradio's current
-Starlette requirement motivated the compatible FastAPI 0.162.0 / Starlette 1.10.0
+API at `/api`. The primary CPU model is loaded once through the shared lifespan.
+The provider rejected startup without an `@spaces.GPU` function. The auxiliary
+benchmark therefore genuinely runs the same checkpoint on an on-demand GPU using
+the official Spaces 0.51.3 SDK. Its separate model is placed on emulated CUDA
+during startup, following the provider's documented loading convention; allocation
+occurs only when the benchmark is requested, with a 20-second duration limit.
+It consumes free daily ZeroGPU quota and uses CPU outside ZeroGPU. The main API
+and React workspace remain on CPU. No external model inference service is used.
+Gradio's current Starlette requirement motivated the compatible FastAPI 0.162.0 / Starlette 1.10.0
 serving stack; the trained FNO, preprocessing and checkpoint are unchanged.
 The provider also installs Gradio's MCP and OAuth extras. Pydantic is pinned to
 2.12.5 to satisfy their declared compatibility range; the first private build
 identified the incompatible newer pin before any public release. ZeroGPU's
 pre-build validator accepts the literal `torch==2.8.0` requirement but rejects
 the compatible local-version suffix `+cpu`. The snapshot retains the accepted
-public version and supplies the official PyTorch CPU extra index for pip's wheel
-selection. Inference explicitly uses CPU regardless of the installed build.
+public version and uses the provider-compatible CUDA build for the auxiliary
+benchmark. The portable Docker runtime separately installs CPU-only PyTorch.
 The snapshot also retains prebuilt `frontend/dist` in the SDK's generated Docker
 context. The local Dockerfile builds that directory in its Node stage, whereas
 the Gradio SDK copies it directly; their ignore rules therefore differ explicitly.

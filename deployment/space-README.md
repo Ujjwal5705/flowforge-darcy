@@ -15,8 +15,10 @@ pinned: false
 A React/TypeScript scientific workspace and FastAPI inference API for a Fourier
 neural operator trained from scratch on a documented PDEBench Darcy beta=1 subset.
 The full application is served at `/`; `/benchmark` is a Gradio benchmark check
-using the same model and runtime. All inference uses CPU. Shared ZeroGPU hosting
-is a free provider tier for this account; the application does not allocate a GPU.
+using the same trained checkpoint and preprocessing. The main workspace/API use
+CPU. The auxiliary benchmark genuinely runs on an on-demand GPU, consuming free
+daily ZeroGPU quota; it falls back to CPU when run locally. No paid upgrade or
+external model inference service is used.
 
 Training: 800 examples; validation: 112; final test: 112; 32×32 spatial subsampling.
 Test mean relative L2: 0.061768; MSE: 0.000435679; MAE: 0.0107552 in dataset units.
