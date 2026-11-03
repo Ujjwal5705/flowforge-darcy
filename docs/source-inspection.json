@@ -1,0 +1,62 @@
+{
+  "size": 1310724488,
+  "datasets": {
+    "nu": {
+      "shape": [
+        10000,
+        128,
+        128
+      ],
+      "dtype": "float32",
+      "chunks": null,
+      "offset": 655362048,
+      "sample_range": [
+        0.10000000149011612,
+        1.0
+      ]
+    },
+    "tensor": {
+      "shape": [
+        10000,
+        1,
+        128,
+        128
+      ],
+      "dtype": "float32",
+      "chunks": null,
+      "offset": 2048,
+      "sample_range": [
+        0.0017173982923850417,
+        0.4812452495098114
+      ]
+    },
+    "x-coordinate": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32",
+      "chunks": null,
+      "offset": 1310722048,
+      "sample_range": [
+        0.00390625,
+        0.99609375
+      ]
+    },
+    "y-coordinate": {
+      "shape": [
+        128
+      ],
+      "dtype": "float32",
+      "chunks": null,
+      "offset": 1310722560,
+      "sample_range": [
+        0.00390625,
+        0.99609375
+      ]
+    }
+  },
+  "attributes": {
+    "beta": "1.0"
+  },
+  "bytes_transferred": 266632
+}

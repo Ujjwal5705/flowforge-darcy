@@ -1,0 +1,28 @@
+{
+  "neuraloperator": "2.0.0",
+  "torch": "2.8.0",
+  "device": "cpu",
+  "loader_signature": "(n_train, n_tests, batch_size, test_batch_sizes, data_root=PosixPath('/Users/ujjwalsharma/Desktop/IISC Bangalore/.venv/lib/python3.11/site-packages/neuralop/data/datasets/data'), test_resolutions=[16, 32], encode_input=False, encode_output=True, encoding='channel-wise', channel_dim=1)",
+  "input_shape": [
+    2,
+    1,
+    16,
+    16
+  ],
+  "output_shape": [
+    2,
+    1,
+    16,
+    16
+  ],
+  "raw_input_dtype": "torch.float32",
+  "explicit_input_cast": "float32",
+  "losses": [
+    0.3537199795246124,
+    0.3044772744178772,
+    0.262622594833374,
+    0.22747735679149628
+  ],
+  "parameters_real_scalars": 3745,
+  "test_samples_loaded": 2
+}
