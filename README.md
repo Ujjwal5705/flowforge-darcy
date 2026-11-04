@@ -290,5 +290,3 @@ Differential Equations*, [paper](https://arxiv.org/abs/2010.08895), and the
 Third-party packages retain their respective licenses. See
 [experiments](docs/experiments.md), [methodology](docs/methodology.md) and
 [architecture](docs/architecture.md) for additional details.
-
-Built by Ujjwal Sharma for the QUEST Lab Full Stack AI Pre-doctoral application.
