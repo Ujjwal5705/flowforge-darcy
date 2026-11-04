@@ -52,6 +52,11 @@ during startup, following the provider's documented loading convention; allocati
 occurs only when the benchmark is requested, with a 20-second duration limit.
 It consumes free daily ZeroGPU quota and uses CPU outside ZeroGPU. The main API
 and React workspace remain on CPU. No external model inference service is used.
+The pinned SDK's `spaces.zero.startup()` hook is called explicitly by `app.py`:
+its automatic report hooks `Blocks.launch()`, which a mounted FastAPI application
+does not call. The mounted Blocks receive the actual Uvicorn server object so GPU
+worker processes can close inherited listener sockets. This SDK integration is
+version-sensitive and must be rechecked when upgrading Spaces.
 Gradio's current Starlette requirement motivated the compatible FastAPI 0.162.0 / Starlette 1.10.0
 serving stack; the trained FNO, preprocessing and checkpoint are unchanged.
 The provider also installs Gradio's MCP and OAuth extras. Pydantic is pinned to

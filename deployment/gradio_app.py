@@ -113,4 +113,5 @@ def create_space_app():
     )
     frontend = Path(os.getenv("FLOWFORGE_FRONTEND_DIR", "frontend/dist"))
     application.mount("/", StaticFiles(directory=frontend, html=True), name="frontend")
+    application.state.benchmark_blocks = demo
     return application

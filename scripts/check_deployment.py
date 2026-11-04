@@ -23,6 +23,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", default="ujjwal75/flowforge-darcy-2026")
     parser.add_argument("--private", action="store_true")
+    parser.add_argument("--benchmark", action="store_true", help="Also verify real CUDA execution")
     parser.add_argument("--output", type=Path, default=Path("artifacts/deployment-smoke.json"))
     args = parser.parse_args()
     token = get_token()
@@ -109,6 +110,28 @@ def main() -> None:
             "CSS/JS equal the locally verified build",
         ],
     }
+    if args.benchmark:
+        from gradio_client import Client
+
+        client = Client(
+            base.rstrip("/") + "/benchmark",
+            token=token if args.private else None,
+            verbose=False,
+            analytics_enabled=False,
+            download_files=False,
+            max_workers=1,
+        )
+        gpu = client.submit(sample["id"], api_name="/benchmark_check").result(timeout=120)
+        gpu_prediction = np.asarray(gpu["prediction"])
+        assert gpu["device"] == "cuda" and gpu["checkpoint_sha256"] == expected
+        assert gpu_prediction.shape == (32, 32) and np.isfinite(gpu_prediction).all()
+        gpu_relative = np.linalg.norm(gpu_prediction - reference) / np.linalg.norm(reference)
+        assert np.isclose(gpu_relative, gpu["comparison"]["relative_l2"], rtol=1e-6)
+        np.testing.assert_allclose(gpu_prediction, prediction, rtol=1e-4, atol=1e-5)
+        report["gpu_benchmark"] = {
+            key: gpu[key] for key in ["device", "inference_ms", "comparison", "execution"]
+        }
+        report["checks"].append("real CUDA benchmark; independent error; agrees with CPU")
     args.output.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report))
 
