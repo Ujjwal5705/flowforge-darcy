@@ -42,11 +42,12 @@ Git and the original log, without rewriting history.
 After the final commit, a portable Git bundle is prepared and verified locally:
 
 ```bash
-git bundle create artifacts/submission/flowforge.bundle --all
+git bundle create artifacts/submission/flowforge.bundle main
 git bundle verify artifacts/submission/flowforge.bundle
 ```
 
-It preserves source and commit history and excludes ignored datasets, caches and
+It preserves the application branch and its complete commit history, excluding
+internal Codex capture refs, ignored datasets, caches and
 the external raw session log. A reviewer can restore it with
-`git clone flowforge.bundle flowforge`. Submit the exact original `.jsonl` file
+`git clone --branch main flowforge.bundle flowforge`. Submit the exact original `.jsonl` file
 separately, unedited; this project note and bundle do not replace it.
