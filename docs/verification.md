@@ -43,8 +43,13 @@ permission warning during figure generation; the figures were generated and
 visually checked. The Makefile directs caches to the project for subsequent runs.
 No warnings or failing checks were suppressed.
 
-## Still being verified
+## Hosted checks in progress
 
-The private hosted application is undergoing its deployment checks. It is not
-yet reported as deployed or verified here.
-This record is updated from actual results before the final commit.
+Private CPU/CUDA prediction and exact frontend asset checks passed; publication
+was then explicitly authorized and performed. Anonymous API checks passed. The
+first hosted browser suite found 503 responses for Gradio assets because the
+16-request HTTP limit was too small; logs confirmed the concurrency rejection.
+One workspace test also exhausted its 30-second total budget after a roughly
+25-second cold-page transfer. HTTP capacity and compression are being corrected;
+remote tests receive a separate 90-second total budget while retaining their
+assertions. Final public browser results are recorded after the rerun.

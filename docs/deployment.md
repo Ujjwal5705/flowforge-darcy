@@ -3,6 +3,10 @@
 The portable runtime is one non-root Python service with the built React assets,
 trained checkpoint and six held-out examples. It uses port 7860, one worker and
 two CPU inference threads. Training data and credentials are not runtime inputs.
+HTTP concurrency is capped at 128 so a browser can fetch the Gradio asset burst;
+the independent model lock still serializes CPU inference with a five-second wait.
+Text/JSON/static responses above 1 KiB use gzip when requested. The upstream
+middleware excludes server-sent events, preserving the benchmark queue stream.
 
 ## Local container
 

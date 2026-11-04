@@ -14,7 +14,7 @@ if __name__ == "__main__":
         host=os.getenv("FLOWFORGE_HOST", "0.0.0.0"),
         port=int(os.getenv("PORT", "7860")),
         workers=1,
-        limit_concurrency=16,
+        limit_concurrency=128,
     )
     server = uvicorn.Server(config)
     # Spaces normally reports startup from Gradio's launch() hook. Mounting

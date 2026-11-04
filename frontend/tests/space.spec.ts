@@ -5,7 +5,9 @@ test('the hosting adapter renders and runs its actual Gradio callback', async ({
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/benchmark/');
-  await expect(page.getByRole('heading', { name: 'FLOWFORGE · benchmark check' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'FLOWFORGE · benchmark check' })).toBeVisible({
+    timeout: 30_000,
+  });
   await page.getByRole('button', { name: 'Run benchmark check' }).click();
   await expect(page.getByText('darcy-fno-f711c406ba83', { exact: false })).toBeVisible({
     timeout: 90_000,

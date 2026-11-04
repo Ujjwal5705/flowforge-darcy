@@ -10,6 +10,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.gzip import GZipMiddleware
 
 from backend.runtime import ModelBusy, ReferenceMismatch, Runtime
 from backend.schemas import (
@@ -114,6 +115,7 @@ def create_app(
 
     application = FastAPI(title="FLOWFORGE", version="0.1.0", lifespan=lifespan)
     application.add_middleware(BodyLimitMiddleware)
+    application.add_middleware(GZipMiddleware, minimum_size=1024, compresslevel=6)
 
     @application.exception_handler(RequestValidationError)
     async def invalid_request(_request, error):

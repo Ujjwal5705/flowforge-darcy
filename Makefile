@@ -20,6 +20,6 @@ test:
 	$(PYTHON) -m pytest -q
 	.venv/bin/ruff check ml backend deployment scripts tests
 serve:
-	$(PYTHON) -m uvicorn backend.app:app --host 127.0.0.1 --port 7860 --workers 1 --limit-concurrency 16
+	$(PYTHON) -m uvicorn backend.app:app --host 127.0.0.1 --port 7860 --workers 1 --limit-concurrency 128
 docker:
 	docker compose up --build -d

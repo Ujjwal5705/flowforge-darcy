@@ -32,4 +32,4 @@ COPY --from=frontend --chown=flowforge:flowforge /build/frontend/dist ./frontend
 USER flowforge
 EXPOSE 7860
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s CMD python -c "import json,urllib.request; r=json.load(urllib.request.urlopen('http://127.0.0.1:7860/api/health',timeout=5)); assert r['model_loaded']"
-CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "7860", "--workers", "1", "--limit-concurrency", "16", "--timeout-keep-alive", "5"]
+CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "7860", "--workers", "1", "--limit-concurrency", "128", "--timeout-keep-alive", "5"]

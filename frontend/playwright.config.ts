@@ -2,7 +2,8 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
-  timeout: 30_000,
+  // Hosted cold-page transfers measured ~25 seconds on this connection.
+  timeout: process.env.FLOWFORGE_URL?.startsWith('https://') ? 90_000 : 30_000,
   expect: { timeout: 10_000 },
   workers: 1,
   retries: 0,
