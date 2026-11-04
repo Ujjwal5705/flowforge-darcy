@@ -25,3 +25,28 @@ An existing Hugging Face token authenticates as `ujjwal75` with write access.
 No token value was displayed. Publishing a new public Space requires an explicit
 audience decision after the application is ready for review. No paid resources
 will be provisioned.
+
+## Final evidence
+
+The owner explicitly approved uploading the reviewed source/checkpoint/metadata
+and six CC BY 4.0 examples to `ujjwal75/flowforge-darcy-2026`, followed by public
+release after verification. Private CPU/CUDA checks passed before publication;
+the final anonymous browser suite passed six tests. Raw training data and this
+session log were excluded from the Space snapshot. No paid upgrade was requested.
+
+A final read of this raw log still identified the same session ID and only
+`gpt-6.1-sol` model entries. The attachment-wrapper caveat above remains unchanged.
+The final commit is made before the 72-hour deadline; actual timestamps remain in
+Git and the original log, without rewriting history.
+
+After the final commit, a portable Git bundle is prepared and verified locally:
+
+```bash
+git bundle create artifacts/submission/flowforge.bundle --all
+git bundle verify artifacts/submission/flowforge.bundle
+```
+
+It preserves source and commit history and excludes ignored datasets, caches and
+the external raw session log. A reviewer can restore it with
+`git clone flowforge.bundle flowforge`. Submit the exact original `.jsonl` file
+separately, unedited; this project note and bundle do not replace it.

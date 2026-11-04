@@ -132,6 +132,7 @@ def main() -> None:
             key: gpu[key] for key in ["device", "inference_ms", "comparison", "execution"]
         }
         report["checks"].append("real CUDA benchmark; independent error; agrees with CPU")
+    report["verified_at_utc"] = datetime.now(timezone.utc).isoformat()
     args.output.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report))
 

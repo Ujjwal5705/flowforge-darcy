@@ -18,7 +18,7 @@ build:
 	npm run build --prefix frontend
 test:
 	$(PYTHON) -m pytest -q
-	.venv/bin/ruff check ml backend deployment scripts tests
+	.venv/bin/ruff check app.py ml backend deployment scripts tests
 serve:
 	$(PYTHON) -m uvicorn backend.app:app --host 127.0.0.1 --port 7860 --workers 1 --limit-concurrency 128
 docker:

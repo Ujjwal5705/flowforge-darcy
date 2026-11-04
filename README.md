@@ -9,6 +9,14 @@ validation-based checkpoint selection, held-out evaluation, a FastAPI service,
 and an interactive React workspace. Predictions are learned approximations with
 explicit limits, rather than exact general-purpose PDE solutions.
 
+**Live app:** [Open FLOWFORGE](https://ujjwal75-flowforge-darcy-2026.hf.space)
+· [Public source Space](https://huggingface.co/spaces/ujjwal75/flowforge-darcy-2026).
+Verified on **4 November 2026** with anonymous API checks and all six real browser
+tests. The main workspace/API use CPU; the auxiliary `/benchmark` uses an
+on-demand GPU and free daily ZeroGPU quota. See the
+[deployment evidence](docs/results/deployment.json) and
+[actual public browser capture](docs/results/workspace.png).
+
 ## Run the application
 
 Python 3.11 or 3.12, Node 22, npm and uv are supported. The final 2.7 MiB checkpoint

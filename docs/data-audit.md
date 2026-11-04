@@ -48,7 +48,7 @@ failed as expected and it is **not used**. No incomplete archive is treated as d
 - Sample coefficient values: 0.1 and 1.0. First solution range: approximately
   0.0017174 to 0.4812452, in the stored benchmark's units.
 - Coordinates are cell centers from 0.00390625 to 0.99609375 on `[0,1]²`.
-- Intended subset: source sample indices 0–1023, spatial slice `[:, ::4, ::4]`,
+- Selected subset: source sample indices 0–1023, spatial slice `[:, ::4, ::4]`,
   without interpolation, with the same coordinate slice. This is a custom bounded
   subset, not a canonical full-benchmark result.
 

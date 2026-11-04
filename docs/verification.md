@@ -14,7 +14,8 @@ quantities are recorded in `artifacts/darcy-fno/` and `docs/experiments.md`.
   and denial of unused file-upload/file-path routes.
 - TypeScript production build: passed.
 - Ruff checks and formatting: passed for the implemented Python modules.
-- Real headless Chromium: **6 passed** on the final hosting adapter, covering
+- Real headless Chromium: **6 passed locally and 6 passed anonymously on the
+  public deployment**, covering
   the complete five-test main workspace suite and the real Gradio callback UI.
   The main suite covers held-out prediction and comparison,
   JSON/CSV downloads with numeric orientation checks, keyboard and pointer edits,
@@ -26,8 +27,9 @@ quantities are recorded in `artifacts/darcy-fno/` and `docs/experiments.md`.
 - The Gradio callback was also called over actual HTTP using gradio_client, returning
   the same model version and finite `[32,32]` prediction as the main API.
 - CPU Docker image: built successfully; non-root runtime became model-ready in
-  3.57 seconds of polling. Image size 286,636,421 bytes; observed memory about
-  235 MiB. Independent HTTP prediction/metric/checkpoint checks passed. All five
+  3.59 seconds of polling. Final image size 286,636,476 bytes; observed memory about
+  220 MiB after the final browser workload.
+  Independent HTTP prediction/metric/checkpoint checks passed. All five
   main browser tests passed against the container, with no application errors
   found in its startup/runtime logs. See `docs/deployment.md` for measurement scope.
 
@@ -43,13 +45,17 @@ permission warning during figure generation; the figures were generated and
 visually checked. The Makefile directs caches to the project for subsequent runs.
 No warnings or failing checks were suppressed.
 
-## Hosted checks in progress
+## Hosted checks and resolved failures
 
 Private CPU/CUDA prediction and exact frontend asset checks passed; publication
 was then explicitly authorized and performed. Anonymous API checks passed. The
 first hosted browser suite found 503 responses for Gradio assets because the
 16-request HTTP limit was too small; logs confirmed the concurrency rejection.
 One workspace test also exhausted its 30-second total budget after a roughly
-25-second cold-page transfer. HTTP capacity and compression are being corrected;
+25-second cold-page transfer. HTTP capacity and compression were corrected;
 remote tests receive a separate 90-second total budget while retaining their
-assertions. Final public browser results are recorded after the rerun.
+assertions. The complete rerun passed **6/6 in 1.3 minutes**, with no page errors.
+Actual gzip output was decompressed and compared byte for byte with the built
+JavaScript. Private real-CUDA output was independently checked against the held-out
+reference and CPU output. The GPU callback also ran through the anonymous browser.
+The final public API/asset record is [deployment.json](results/deployment.json).

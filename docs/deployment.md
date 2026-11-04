@@ -25,9 +25,9 @@ The tracked empty directory permits ordinary builds directly from a fresh clone.
 Only the six required model/metadata files enter the final application layer.
 The healthcheck verifies `model_loaded`, not merely a listening port.
 
-The ARM64 image was built and run on 3 November 2026 UTC: 286,636,421 image bytes,
-about 235 MiB container memory after the browser workload, and model-ready health
-3.57 seconds after the startup poll began (immediately after `docker run`). The
+The final ARM64 image was rebuilt and run on 4 November 2026: 286,636,476 image bytes,
+and model-ready health 3.59 seconds after the startup poll began (immediately
+after `docker run`). Observed memory was about 220 MiB after the final browser workload. The
 container runs as `flowforge`, health status is `healthy`, and five real browser
 tests passed against its same-origin frontend/API on localhost:7861. A held-out
 prediction returned finite 32×32 output and relative L2 0.04366723; independent
@@ -61,8 +61,8 @@ its automatic report hooks `Blocks.launch()`, which a mounted FastAPI applicatio
 does not call. The mounted Blocks receive the actual Uvicorn server object so GPU
 worker processes can close inherited listener sockets. This SDK integration is
 version-sensitive and must be rechecked when upgrading Spaces.
-Gradio's current Starlette requirement motivated the compatible FastAPI 0.162.0 / Starlette 1.10.0
-serving stack; the trained FNO, preprocessing and checkpoint are unchanged.
+Gradio's Starlette requirement motivated the compatible FastAPI 0.162.0 /
+Starlette 1.10.0 hosting stack; the trained FNO, preprocessing and checkpoint are unchanged.
 The provider also installs Gradio's MCP and OAuth extras. Pydantic is pinned to
 2.12.5 to satisfy their declared compatibility range; the first private build
 identified the incompatible newer pin before any public release. ZeroGPU's
@@ -80,11 +80,48 @@ Install `requirements-space.lock` and run the adapter with:
 .venv/bin/python app.py
 ```
 
-The prepared Space metadata is in `deployment/space-README.md`. Source and built
-assets are prepared from this session; the model is included locally at runtime.
-The Space remains private until publication is explicitly authorized. The final
-verification record will identify the deployed revision, URL and measured smoke
-test once that work has actually succeeded.
+## Verified public release
+
+Published with the owner's explicit approval on **4 November 2026** after private
+CPU/CUDA verification. No paid upgrade, paid hardware or paid storage was requested.
+
+- App: <https://ujjwal75-flowforge-darcy-2026.hf.space>
+- Source: <https://huggingface.co/spaces/ujjwal75/flowforge-darcy-2026>
+- Validated application source: `92a8c5cbca08d427f07ac75d2b336684540c1c52`.
+- Validated Space revision: `6585fa77d21f8c60a00fc5f7d274e247921878c5`.
+- Anonymous health/model-info/examples/prediction checks passed, with expected
+  checkpoint SHA-256, finite 32×32 output, independently recalculated relative L2
+  **0.04366721** for test-01, and matching local/remote CSS/JS hashes.
+- **Six anonymous Chromium tests passed** in 1.3 minutes, including actual GPU
+  callback execution, result visualization, downloads, editing, loading/error
+  recovery, mobile layout and automated accessibility checks.
+- Private CUDA verification used an NVIDIA RTX PRO 6000 Blackwell Server Edition
+  MIG 2g.48gb. The sample relative L2 was **0.04366722**, and outputs agreed with
+  CPU within `rtol=1e-4, atol=1e-5`. Its one observed call took 474.02 ms including
+  input/output transfers, excluding allocation/queue/startup placement. This is
+  a functional check, not a warmed GPU latency benchmark or speedup claim.
+- Actual JavaScript response: **71,045 gzip bytes**, versus 228,009 identity bytes;
+  decompression exactly matched the verified local build.
+
+The sanitized machine-readable record is [deployment.json](results/deployment.json).
+The revision identifiers describe the tested application; later documentation-only
+updates retain the same runtime code and model. Startup/request logs were checked;
+the initial concurrency rejection was fixed and the complete browser suite rerun.
+Upstream Matplotlib/pyparsing and provider pip warnings were observed, without an
+application exception in the successful runtime. Shared hosting availability and
+GPU quota follow the provider's limits.
+
+`scripts/prepare_space.py` creates a clean-commit snapshot and checks the model
+hash. `scripts/upload_space.py` uploads it without changing visibility. The
+prepared Space metadata is `deployment/space-README.md`. Raw training data,
+credentials and the session log are excluded. Recheck the deployed app with:
+
+```bash
+.venv/bin/python scripts/check_deployment.py
+# Optional: consumes a small amount of shared GPU quota
+.venv/bin/python scripts/check_deployment.py --benchmark
+FLOWFORGE_URL=https://ujjwal75-flowforge-darcy-2026.hf.space npm run test:e2e:space --prefix frontend
+```
 
 References: [Spaces policy](https://huggingface.co/docs/hub/en/spaces-overview),
 [free ZeroGPU eligibility](https://huggingface.co/docs/hub/en/spaces-zerogpu),

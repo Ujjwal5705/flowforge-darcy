@@ -1,0 +1,64 @@
+{
+  "url": "https://ujjwal75-flowforge-darcy-2026.hf.space",
+  "private": false,
+  "repo_id": "ujjwal75/flowforge-darcy-2026",
+  "hub_commit": "6585fa77d21f8c60a00fc5f7d274e247921878c5",
+  "verified_at_utc": "2026-11-04T02:23:58.232365+00:00",
+  "model_version": "darcy-fno-f711c406ba83",
+  "checkpoint_sha256": "f711c406ba83cee285f97adf2cd067c803e4d915753ee613e5f2639c727265e5",
+  "prediction_shape": [
+    32,
+    32
+  ],
+  "device": "cpu",
+  "inference_ms": 8.567176759243011,
+  "comparison": {
+    "mse": 0.00011036320960487163,
+    "mae": 0.007418279766170599,
+    "relative_l2": 0.04366721437052846
+  },
+  "frontend_asset_sha256": {
+    "/assets/index-B0sJmbIw.js": "b52e6c71f39f319f4c35557abefc3a6b6bdccdabbfb99a609094baead773aec7",
+    "/assets/index-CJCf1mZF.css": "933fddd3782f69bd74564281dac064c75f952e989b7e56c7ce17ae274027ceea"
+  },
+  "checks": [
+    "health",
+    "model-info",
+    "examples",
+    "prediction",
+    "reference comparison",
+    "frontend HTML",
+    "CSS/JS equal the locally verified build"
+  ],
+  "compression": {
+    "asset": "index-B0sJmbIw.js",
+    "identity_bytes": 228009,
+    "gzip_bytes": 71045,
+    "decompressed_bytes_match": true
+  },
+  "validated_application_source_commit": "92a8c5cbca08d427f07ac75d2b336684540c1c52",
+  "browser": {
+    "passed": 6,
+    "failed": 0,
+    "target": "anonymous public URL",
+    "command": "FLOWFORGE_URL=https://ujjwal75-flowforge-darcy-2026.hf.space npm run test:e2e:space --prefix frontend"
+  },
+  "gpu_benchmark": {
+    "device": "cuda",
+    "inference_ms": 474.0236799698323,
+    "comparison": {
+      "mse": 0.00011036322233479902,
+      "mae": 0.0074182805301461485,
+      "relative_l2": 0.04366721688894223
+    },
+    "execution": "On-demand NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb; timing includes input/output transfers, excludes queue/allocation and startup model placement",
+    "numeric_verification_scope": "private prerelease HTTP; public CUDA callback also exercised by Chromium"
+  },
+  "recorded_at_utc": "2026-11-04T02:27:15.643477+00:00",
+  "runtime_log_observations": {
+    "observed_5xx_lines": 0,
+    "application_tracebacks": 0,
+    "concurrency_warnings": 0,
+    "upstream_warnings": "provider root-pip notice; Matplotlib/pyparsing deprecations"
+  }
+}

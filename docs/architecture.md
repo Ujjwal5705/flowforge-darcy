@@ -54,7 +54,7 @@ an error map. Editing an example clears its reference identity in the client.
 
 Source, dependency locks, training commands, compact measured reports and figures
 belong in Git. Raw data, virtual environments, caches and intermediate checkpoints
-are ignored. The final checkpoint is only about 2.7 MB, so an explicit allowlist
+are ignored. The final checkpoint is only about 2.7 MiB, so an explicit allowlist
 versions exactly one runtime artifact, its configuration, split indices, history,
 evaluation, training-mean baseline and six attributed held-out examples. This makes
 the application runnable directly from the repository. It is the checkpoint trained
